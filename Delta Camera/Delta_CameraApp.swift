@@ -7,8 +7,17 @@
 
 import SwiftUI
 
+import DeltaCore
+import GBCDeltaCore
+
 @main
-struct Delta_CameraApp: App {
+struct Delta_CameraApp: App
+{
+    init()
+    {
+        Delta.register(GBC.core)
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

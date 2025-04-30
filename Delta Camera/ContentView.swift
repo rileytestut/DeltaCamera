@@ -11,15 +11,150 @@ import Roxas
 import DeltaCore
 import GBCDeltaCore
 
-struct ContentView: View {
+import ZIPFoundation
+
+extension URL: Identifiable
+{
+    public var id: URL { self }
+}
+
+// Copied from Delta
+enum ImportError: LocalizedError, Hashable, Equatable
+{
+    case doesNotExist(URL)
+    case invalid(URL)
+    case unsupported(URL)
+    case unknown(URL, NSError)
+    case saveFailed(Set<URL>, NSError)
+    
+    var errorDescription: String? {
+        switch self
+        {
+        case .doesNotExist: return NSLocalizedString("The file does not exist.", comment: "")
+        case .invalid: return NSLocalizedString("The file is invalid.", comment: "")
+        case .unsupported: return NSLocalizedString("This file is not supported.", comment: "")
+        case .unknown(_, let error): return error.localizedDescription
+        case .saveFailed(_, let error): return error.localizedDescription
+        }
+    }
+}
+
+struct ContentView: View
+{
+    @SwiftUI.State
+    private var isImporting: Bool = false
+    
+    @SwiftUI.State
+    private var gameFileURL: URL?
+    
+    @SwiftUI.State
+    private var importError: Error?
+    
+    @SwiftUI.State
+    private var showingErrorAlert: Bool = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
+        VStack(spacing: 15) {
+            Image(systemName: "camera")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, world!")
+            
+            Button("Choose Game Boy Camera ROM…") {
+                isImporting = true
+            }
         }
         .padding()
+        .fileImporter(isPresented: $isImporting, allowedContentTypes: [.gb, .gbc, .zip]) { result in
+            importGame(with: result)
+        }
+        .fullScreenCover(item: $gameFileURL) { fileURL in
+            let game = Game(fileURL: fileURL, type: .gbc)
+            GameView(game: game).ignoresSafeArea()
+        }
+        .alert("Unable to Open Game", isPresented: $showingErrorAlert, presenting: importError) { error in
+            Button("OK") {}
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+    }
+}
+
+private extension ContentView
+{
+    func importGame(with result: Result<URL, Error>)
+    {
+        Task<Void, Never> {
+            do
+            {
+                let fileURL = try result.get()
+                
+                guard fileURL.startAccessingSecurityScopedResource() else { return }
+                defer {
+                    fileURL.stopAccessingSecurityScopedResource()
+                }
+                
+                let gameURL: URL
+                if fileURL.pathExtension == "zip"
+                {
+                    let extractedGameURL = try self.unzipGame(at: fileURL)
+                    gameURL = extractedGameURL
+                }
+                else
+                {
+                    gameURL = fileURL
+                }
+                
+                let destinationURL = URL.documentsDirectory.appendingPathComponent("Game.gb")
+                _ = try FileManager.default.copyItem(at: gameURL, to: destinationURL, shouldReplace: true)
+                
+                gameFileURL = destinationURL
+            }
+            catch
+            {
+                importError = error
+                showingErrorAlert = true
+            }
+        }
+    }
+    
+    // Heavily based on Delta's DatabaseManager.extractCompressedGames(at:completion:)
+    private func unzipGame(at url: URL) throws(ImportError) -> URL
+    {
+        var gameURL: URL?
+        
+        guard let archive = Archive(url: url, accessMode: .read) else { throw .invalid(url) }
+        
+        for entry in archive
+        {
+            do
+            {
+                // Ensure entry is not in a subdirectory
+                guard !entry.path.contains("/") else { continue }
+                
+                let fileExtension = (entry.path as NSString).pathExtension.lowercased()
+                
+                guard fileExtension == "gb" || fileExtension == "gbc" else { continue }
+                
+                // Must use temporary directory, and not the directory containing zip file, since the latter might be read-only (such as when importing from Safari)
+                let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(entry.path)
+                
+                if FileManager.default.fileExists(atPath: outputURL.path)
+                {
+                    try FileManager.default.removeItem(at: outputURL)
+                }
+                
+                _ = try archive.extract(entry, to: outputURL, skipCRC32: true)
+                
+                gameURL = outputURL
+            }
+            catch let error
+            {
+                throw .unknown(url, error as NSError)
+            }
+        }
+        
+        guard let gameURL else { throw .invalid(url) }
+        return gameURL
     }
 }
 
