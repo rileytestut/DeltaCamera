@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+import DeltaCore
+import GBCDeltaCore
+
 struct ContentView: View {
     var body: some View {
         VStack {
