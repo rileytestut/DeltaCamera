@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+import Roxas
 import DeltaCore
 import GBCDeltaCore
 

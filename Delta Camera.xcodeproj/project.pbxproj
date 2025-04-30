@@ -13,6 +13,8 @@
 		D5AAEF282DC2C6F5002FD391 /* GBCDeltaCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF222DC2C63D002FD391 /* GBCDeltaCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D5AAEF2A2DC2C706002FD391 /* ZIPFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */; };
 		D5AAEF2B2DC2C706002FD391 /* ZIPFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D5AAEF372DC2D0D6002FD391 /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; };
+		D5AAEF382DC2D0D6002FD391 /* Roxas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -22,6 +24,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D5AAEF382DC2D0D6002FD391 /* Roxas.framework in Embed Frameworks */,
 				D5AAEF252DC2C6F3002FD391 /* DeltaCore.framework in Embed Frameworks */,
 				D5AAEF282DC2C6F5002FD391 /* GBCDeltaCore.framework in Embed Frameworks */,
 				D5AAEF2B2DC2C706002FD391 /* ZIPFoundation.framework in Embed Frameworks */,
@@ -35,6 +38,7 @@
 		D5AAEF202DC2C63A002FD391 /* DeltaCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DeltaCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5AAEF222DC2C63D002FD391 /* GBCDeltaCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = GBCDeltaCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIPFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5AAEF362DC2D0D6002FD391 /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5AD37F22DC171AF00FE7CA3 /* Delta Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delta Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -51,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5AAEF372DC2D0D6002FD391 /* Roxas.framework in Frameworks */,
 				D5AAEF242DC2C6F3002FD391 /* DeltaCore.framework in Frameworks */,
 				D5AAEF272DC2C6F5002FD391 /* GBCDeltaCore.framework in Frameworks */,
 				D5AAEF2A2DC2C706002FD391 /* ZIPFoundation.framework in Frameworks */,
@@ -63,6 +68,7 @@
 		D5AAEF1F2DC2C63A002FD391 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D5AAEF362DC2D0D6002FD391 /* Roxas.framework */,
 				D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */,
 				D5AAEF222DC2C63D002FD391 /* GBCDeltaCore.framework */,
 				D5AAEF202DC2C63A002FD391 /* DeltaCore.framework */,

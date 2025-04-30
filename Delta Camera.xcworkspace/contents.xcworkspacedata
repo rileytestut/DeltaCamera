@@ -10,4 +10,7 @@
    <FileRef
       location = "group:Dependencies/GBCDeltaCore/GBCDeltaCore.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:Dependencies/Roxas/Roxas.xcodeproj">
+   </FileRef>
 </Workspace>

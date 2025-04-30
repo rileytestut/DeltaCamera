@@ -4,3 +4,6 @@
 [submodule "Dependencies/GBCDeltaCore"]
 	path = Dependencies/GBCDeltaCore
 	url = https://github.com/rileytestut/GBCDeltaCore.git
+[submodule "Dependencies/Roxas"]
+	path = Dependencies/Roxas
+	url = https://github.com/rileytestut/Roxas.git
