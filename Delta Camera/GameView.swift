@@ -8,8 +8,34 @@
 import SwiftUI
 
 import DeltaCore
+import GBCDeltaCore
 
-struct GameView: UIViewControllerRepresentable
+struct GameView: View
+{
+    let game: Game
+    
+    private let cameraFeedProcessor = CameraFeedProcessor()
+    
+    var body: some View {
+        WrappedGameView(game: game)
+            .onAppear {
+                self.cameraFeedProcessor.videoDataHandler = { imageData in
+                    GBCEmulatorBridge.shared.cameraData = imageData
+                }
+                self.cameraFeedProcessor.start()
+            }
+//            .onReceive(self.cameraFeedProcessor.videoDataPublisher.receive(on: RunLoop.main)) { imageData in
+//                imageData.withUnsafeBytes { baseAddress in
+//                    let uiImage = imageFromARGB32Bitmap(baseAddress.baseAddress?.assumingMemoryBound(to: UInt32.self), 128, 112)
+//                    _ = uiImage
+//                }
+//                
+//                GBCEmulatorBridge.shared.cameraData = imageData
+//            }
+    }
+}
+
+private struct WrappedGameView: UIViewControllerRepresentable
 {
     let game: Game
     
@@ -26,7 +52,7 @@ struct GameView: UIViewControllerRepresentable
     {
     }
 }
-
-#Preview {
-    ContentView()
-}
+//
+//#Preview {
+//    GameView()
+//}
