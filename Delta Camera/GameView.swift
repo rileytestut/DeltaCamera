@@ -17,7 +17,7 @@ struct GameView: View
     private let cameraFeedProcessor = CameraFeedProcessor()
     
     var body: some View {
-        WrappedGameView(game: game)
+        WrappedGameView(game: game, cameraFeedProcessor: cameraFeedProcessor)
             .onAppear {
                 self.cameraFeedProcessor.videoDataHandler = { imageData in
                     GBCEmulatorBridge.shared.cameraData = imageData
@@ -38,13 +38,15 @@ struct GameView: View
 private struct WrappedGameView: UIViewControllerRepresentable
 {
     let game: Game
+    let cameraFeedProcessor: CameraFeedProcessor
     
     func makeUIViewController(context: Context) -> some UIViewController
     {
-        let gameViewController = GameViewController()
+        let gameViewController = CameraViewController()
         gameViewController.game = self.game
         gameViewController.loadViewIfNeeded()
         gameViewController.controllerView.playerIndex = 0
+        gameViewController.cameraFeedProcessor = self.cameraFeedProcessor
         return gameViewController
     }
     
