@@ -10,13 +10,18 @@ import SwiftUI
 import DeltaCore
 import GBCDeltaCore
 
-struct GameView: View
+public struct GameView: View
 {
-    let game: Game
+    public let game: Game
     
     private let cameraFeedProcessor = CameraFeedProcessor()
     
-    var body: some View {
+    public init(game: Game)
+    {
+        self.game = game
+    }
+    
+    public var body: some View {
         WrappedGameView(game: game, cameraFeedProcessor: cameraFeedProcessor)
             .onAppear {
                 self.cameraFeedProcessor.videoDataHandler = { imageData in

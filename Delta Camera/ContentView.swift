@@ -11,6 +11,8 @@ import Roxas
 import DeltaCore
 import GBCDeltaCore
 
+import CaptureKit
+
 import ZIPFoundation
 
 extension URL: Identifiable
