@@ -41,13 +41,13 @@ public actor CameraController: NSObject
         return self.sessionQueue.asUnownedSerialExecutor()
     }
     
+    public var captureHandler: (() -> Void)?
+    
     public private(set) var isPrepared: Bool = false
     
     public private(set) var controls: [AVCaptureControl] = []
     
     internal private(set) var isCameraControlActive: Bool = false
-    
-    private var _isPressingCameraControl: Bool = false
     
     /// Private
     public let sessionQueue = DispatchQueue(label: "com.rileytestut.Prime.CameraController.sessionQueue") as! _DispatchSerialExecutorQueue
@@ -178,91 +178,20 @@ public extension CameraController
     
     func makeCaptureInteraction() -> AVCaptureEventInteraction
     {
-        let interaction = AVCaptureEventInteraction { [weak self] event in
-            guard let self else { return }
-            
-            if event.phase == .began && self.isCameraControlActive
-            {
-                self._isPressingCameraControl = true
-            }
-            
-            if self._isPressingCameraControl
-            {
-                // Camera Control
-                
-//                switch event.phase
-//                {
-//                case .began: self.activate(Input.cameraControl)
-//                case .ended, .cancelled: self.deactivate(Input.cameraControl)
-//                    
-//                @unknown default: break
-//                }
-                
-                switch event.phase
-                {
-                case .began: Logger.main.info("Activating camera control input.")
-                case .ended, .cancelled: Logger.main.info("Deactivating camera control input.")
-                @unknown default: break
-                }
-                
-                
-            }
-            else
-            {
-                // Volume Down
-                
-//                switch event.phase
-//                {
-//                case .began: self.activate(Input.volumeDown)
-//                case .ended, .cancelled:
-//                    Task { @MainActor in
-//                        // Delay deactivation because activation is also delayed.
-//                        try await Task.sleep(for: .milliseconds(32))
-//                        self.deactivate(Input.volumeDown)
-//                    }
-//                @unknown default: break
-//                }
-                
-                switch event.phase
-                {
-                case .began: Logger.main.info("Activating volume down input.")
-                case .ended, .cancelled: Logger.main.info("Deactivating volume down input.")
-                @unknown default: break
-                }
-            }
-            
-            if event.phase == .ended && self._isPressingCameraControl
-            {
-                self._isPressingCameraControl = false
-            }
-            
-        } secondary: { event in
-            // Volume Up
-            
-//            switch event.phase
-//            {
-//            case .began: self.activate(Input.volumeUp)
-//            case .ended, .cancelled:
-//                Task { @MainActor in
-//                    // Delay deactivation because activation is also delayed.
-//                    try await Task.sleep(for: .milliseconds(32))
-//                    self.deactivate(Input.volumeUp)
-//                }
-//                
-//            @unknown default: break
-//            }
-            
+        let interaction = AVCaptureEventInteraction { event in
             switch event.phase
             {
-            case .began: Logger.main.info("Activating volume up input.")
-            case .ended, .cancelled: Logger.main.info("Deactivating volume up input.")
+            case .began:
+                Logger.main.info("Activating capture button input.")
+                self.captureHandler?()
+                
+            case .ended, .cancelled: Logger.main.info("Deactivating capture button input.")
             @unknown default: break
             }
         }
         
         return interaction
     }
-
 }
 
 @available(iOS 18.0, *)

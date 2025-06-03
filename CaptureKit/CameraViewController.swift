@@ -47,6 +47,16 @@ class CameraViewController: GameViewController
             let interaction = processor.cameraController.makeCaptureInteraction()
             self.view.addInteraction(interaction)
             self.captureInteraction = interaction
+            
+            processor.cameraController.captureHandler = {
+                // Take photo by pressing "A"
+                let input = AnyInput(stringValue: GBCGameInput.a.stringValue, intValue: GBCGameInput.a.intValue, type: .controller(.controllerSkin))
+                self.controllerView.activate(input)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.controllerView.deactivate(input)
+                }
+            }
         }
     }
     
