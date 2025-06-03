@@ -29,6 +29,7 @@ class CameraViewController: GameViewController
         super.viewDidLoad()
         
         self.delegate = self
+        self.automaticallyPausesWhileInactive = false
         
         self.menuButton = UIButton(type: .custom)
         self.menuButton.isUserInteractionEnabled = false
