@@ -7,7 +7,11 @@
 
 import UIKit
 import AVKit
+import Photos
 
+import CaptureKit
+
+import Roxas
 import DeltaCore
 import GBCDeltaCore
 
@@ -33,7 +37,11 @@ class CameraViewController: GameViewController
             self?.cameraFeedProcessor?.cameraController.switchCameras()
         }
         
-        let menu = UIMenu(children: [switchCameraAction])
+        let exportPhotosAction = UIAction(title: NSLocalizedString("Export Photos", comment: ""), image: UIImage(systemName: "square.and.arrow.up.on.square")) { [weak self] _ in
+            self?.exportAllPhotos()
+        }
+        
+        let menu = UIMenu(children: [switchCameraAction, exportPhotosAction])
         self.menuButton.menu = menu
         self.menuButton.showsMenuAsPrimaryAction = true
     }
@@ -78,6 +86,68 @@ class CameraViewController: GameViewController
         frame.size.height *= self.controllerView.bounds.height
         
         self.menuButton.frame = frame
+    }
+}
+
+private extension CameraViewController
+{
+    func exportAllPhotos()
+    {
+        Task<Void, Never> {
+            do
+            {
+                guard let game = self.game else { return }
+                
+                let saveFileURL = game.gameSaveURL
+                
+                let parser = try RAMParser(fileURL: saveFileURL)
+                
+                var exportCount = 0
+                var errorCount = 0
+                var exportError: Error?
+                
+                for i in 0..<30
+                {
+                    guard let photo = parser.photo(at: i) else { continue }
+                    
+                    Logger.main.info("Exporting photo at index \(photo.index) (\([photo.displayIndex]))...")
+                    
+                    if let image = photo.makeImage()
+                    {
+                        do
+                        {
+                            try await PHPhotoLibrary.shared().saveImageToPhotoLibrary(image)
+                            exportCount += 1
+                        }
+                        catch
+                        {
+                            Logger.main.error("Failed to export photo at index \(i). \(error.localizedDescription, privacy: .public)")
+                            errorCount += 1
+                            exportError = error
+                        }
+                    }
+                }
+                
+                if let exportError
+                {
+                    let title = AttributedString(localized: "Unable to Export ^[\(errorCount) Image](inflect: true)")
+                    let alertController = UIAlertController(title: String(title.characters), message: exportError.localizedDescription, preferredStyle: .alert)
+                    alertController.addAction(.ok)
+                    self.present(alertController, animated: true)
+                }
+                else
+                {
+                    let title = AttributedString(localized: "Successfully Exported ^[\(exportCount) Image](inflect: true)")
+                    let alertController = UIAlertController(title: String(title.characters), message: String(localized: "You can view them all in your Photo Library."), preferredStyle: .alert)
+                    alertController.addAction(.ok)
+                    self.present(alertController, animated: true)
+                }
+            }
+            catch
+            {
+                Logger.main.error("Failed to export photos from save file. \(error.localizedDescription, privacy: .public)")
+            }
+        }
     }
 }
 
