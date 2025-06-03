@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVKit
 
 import DeltaCore
 import GBCDeltaCore
@@ -15,6 +16,8 @@ class CameraViewController: GameViewController
     weak var cameraFeedProcessor: CameraFeedProcessor?
     
     private var menuButton: UIButton!
+    
+    private var captureInteraction: AVCaptureEventInteraction?
     
     override func viewDidLoad()
     {
@@ -33,6 +36,18 @@ class CameraViewController: GameViewController
         let menu = UIMenu(children: [switchCameraAction])
         self.menuButton.menu = menu
         self.menuButton.showsMenuAsPrimaryAction = true
+    }
+    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(animated)
+        
+        if self.captureInteraction == nil, let processor = self.cameraFeedProcessor
+        {
+            let interaction = processor.cameraController.makeCaptureInteraction()
+            self.view.addInteraction(interaction)
+            self.captureInteraction = interaction
+        }
     }
     
     override func viewDidLayoutSubviews()
