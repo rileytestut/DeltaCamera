@@ -8,6 +8,7 @@
 import UIKit
 import AVKit
 import Photos
+import CryptoKit
 
 import CaptureKit
 
@@ -98,6 +99,8 @@ private extension CameraViewController
             {
                 guard let game = self.game else { return }
                 
+                var exportedPhotoHashes = Set(UserDefaults.shared.exportedPhotoHashes ?? [])
+                
                 let saveFileURL = game.gameSaveURL
                 
                 let parser = try RAMParser(fileURL: saveFileURL)
@@ -116,8 +119,16 @@ private extension CameraViewController
                     {
                         do
                         {
-                            try await PHPhotoLibrary.shared().saveImageToPhotoLibrary(image)
+                            guard let pngData = image.pngData() else { throw CocoaError(.fileReadCorruptFile) }
+                            
+                            let hash = SHA256.hash(data: pngData)
+                            let hashString = hash.compactMap { String(format: "%02x", $0) }.joined()
+                            guard !exportedPhotoHashes.contains(hashString) else { continue }
+                            
+                            try await PHPhotoLibrary.shared().saveImageDataToPhotoLibrary(pngData)
+                            
                             exportCount += 1
+                            exportedPhotoHashes.insert(hashString)
                         }
                         catch
                         {
@@ -142,6 +153,8 @@ private extension CameraViewController
                     alertController.addAction(.ok)
                     self.present(alertController, animated: true)
                 }
+                
+                UserDefaults.shared.exportedPhotoHashes = Array(exportedPhotoHashes)
             }
             catch
             {

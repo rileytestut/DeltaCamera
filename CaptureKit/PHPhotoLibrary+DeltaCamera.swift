@@ -12,10 +12,8 @@ import UniformTypeIdentifiers
 
 extension PHPhotoLibrary
 {
-    func saveImageToPhotoLibrary(_ image: UIImage) async throws
+    func saveImageDataToPhotoLibrary(_ pngData: Data) async throws
     {
-        guard let pngData = image.pngData() else { throw CocoaError(.fileReadCorruptFile) }
-        
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
                 guard status == .authorized || status == .limited else {
