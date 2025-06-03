@@ -55,6 +55,11 @@ struct ContentView: View
     @SwiftUI.State
     private var showingErrorAlert: Bool = false
     
+    private var localGameURL: URL {
+        let destinationURL = URL.documentsDirectory.appendingPathComponent("Game.gb")
+        return destinationURL
+    }
+    
     var body: some View {
         VStack(spacing: 15) {
             Image(systemName: "camera")
@@ -77,6 +82,10 @@ struct ContentView: View
             Button("OK") {}
         } message: { error in
             Text(error.localizedDescription)
+        }
+        .onAppear {
+            guard FileManager.default.fileExists(atPath: localGameURL.path()) else { return }
+            gameFileURL = localGameURL
         }
     }
 }
@@ -106,10 +115,9 @@ private extension ContentView
                     gameURL = fileURL
                 }
                 
-                let destinationURL = URL.documentsDirectory.appendingPathComponent("Game.gb")
-                _ = try FileManager.default.copyItem(at: gameURL, to: destinationURL, shouldReplace: true)
+                _ = try FileManager.default.copyItem(at: gameURL, to: self.localGameURL, shouldReplace: true)
                 
-                gameFileURL = destinationURL
+                gameFileURL = self.localGameURL
             }
             catch
             {
