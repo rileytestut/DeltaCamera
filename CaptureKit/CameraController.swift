@@ -8,22 +8,87 @@
 
 import Foundation
 import AVFoundation
+import CoreImage
 import AVKit
 
-import CaptureKit
+public protocol CameraControllerDelegate: AnyObject
+{
+    func cameraController(_ cameraController: CameraController, didOutputFrame image: CIImage)
+}
 
-@available(iOS 18.0, *)
 public actor CameraController: NSObject
 {
+    private(set) weak var delegate: CameraControllerDelegate?
+    
     /// State
-    public private(set) var running = false
+    public private(set) var isRunning = false
     
     /// AVFoundation
     public let captureSession: AVCaptureSession
+        
+    /// Actor
+    public nonisolated var unownedExecutor: UnownedSerialExecutor {
+        return self.sessionQueue.asUnownedSerialExecutor()
+    }
     
-    /// Cameras
-    public var currentCamera: AVCaptureDevice?
+    /// Private
+    private let sessionQueue = DispatchQueue(label: "com.rileytestut.Prime.CameraController.sessionQueue") as! _DispatchSerialExecutorQueue
+    private let videoDataOutput: AVCaptureVideoDataOutput
+    
+    private let preferredInitialCameraPosition: AVCaptureDevice.Position
+    
+    private var isPrepared: Bool = false
+    private var isCameraControlActive: Bool = false
+    
+    public init(sessionPreset: AVCaptureSession.Preset, preferredCameraPosition: AVCaptureDevice.Position = .unspecified)
     {
+        self.captureSession = AVCaptureSession()
+        self.captureSession.sessionPreset = sessionPreset
+        
+        self.preferredInitialCameraPosition = preferredCameraPosition
+        
+        self.videoDataOutput = AVCaptureVideoDataOutput()
+        self.videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
+        
+        super.init()
+        
+        self.videoDataOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
+    }
+}
+
+public extension CameraController
+{
+    func setDelegate(_ delegate: CameraControllerDelegate)
+    {
+        self.delegate = delegate
+    }
+    
+    func startSession() throws
+    {
+        guard !self.isRunning else { return }
+        
+        if !self.isPrepared
+        {
+            try self.prepareSession()
+        }
+        
+        self.captureSession.startRunning()
+        self.isRunning = true
+    }
+    
+    func stopSession()
+    {
+        guard self.isRunning else { return }
+        
+        self.captureSession.stopRunning()
+        self.isRunning = false
+    }
+}
+
+/// Cameras
+public extension CameraController
+{
+    var activeCamera: AVCaptureDevice? {
         guard let inputs = self.captureSession.inputs as? [AVCaptureDeviceInput] else { return nil }
         
         for input in inputs
@@ -37,153 +102,42 @@ public actor CameraController: NSObject
         return nil
     }
     
-    public nonisolated var unownedExecutor: UnownedSerialExecutor {
-        return self.sessionQueue.asUnownedSerialExecutor()
-    }
-    
-    public var captureHandler: (() -> Void)?
-    
-    public private(set) var isPrepared: Bool = false
-    
-    public private(set) var controls: [AVCaptureControl] = []
-    
-    internal private(set) var isCameraControlActive: Bool = false
-    
-    /// Private
-    public let sessionQueue = DispatchQueue(label: "com.rileytestut.Prime.CameraController.sessionQueue") as! _DispatchSerialExecutorQueue
-    
-    public init(sessionPreset: AVCaptureSession.Preset, preferredCameraPosition: AVCaptureDevice.Position = .unspecified)
+    func defaultCamera(for position: AVCaptureDevice.Position) -> AVCaptureDevice?
     {
-        self.captureSession = AVCaptureSession()
-        self.captureSession.sessionPreset = sessionPreset
+        let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTripleCamera, .builtInDualCamera, .builtInDualWideCamera, .builtInWideAngleCamera], mediaType: .video, position: position)
         
-        super.init()
-        
-        self.sessionQueue.async {
-            self.assumeIsolated { cameraController in
-                cameraController.captureSession.beginConfiguration()
-                cameraController.addCameraDevice(for: preferredCameraPosition)
-                cameraController.captureSession.commitConfiguration()
-            }
-        }
+        let device = session.devices.first
+        return device
     }
-}
-
-/// Session
-@available(iOS 18.0, *)
-public extension CameraController
-{
-    func prepareSession()
+    
+    func setActiveCamera(_ captureDevice: AVCaptureDevice)
     {
         self.captureSession.beginConfiguration()
-        defer {
-            self.captureSession.commitConfiguration()
-        }
         
-        guard self.captureSession.supportsControls else {
-            Logger.main.error("Capture session does not support Camera Control.")
-            return
-        }
-        
-        self.captureSession.setControlsDelegate(self, queue: self.sessionQueue)
-        
-        for control in self.controls
+        if let videoInput = self.captureSession.inputs.first(where: { $0.ports.first?.mediaType == .video })
         {
-            self.captureSession.addControl(control)
+            // Remove previous active camera input.
+            self.captureSession.removeInput(videoInput)
         }
         
-        self.isPrepared = true
-    }
-    
-    func startSession()
-    {
-        guard !self.running else { return }
-        self.running = true
-        
-        if !self.isPrepared
-        {
-            self.prepareSession()
-        }
-        
-        self.captureSession.startRunning()
-    }
-    
-    func stopSession()
-    {
-        guard self.running else { return }
-        self.running = false
-        
-        self.captureSession.stopRunning()
-    }
-    
-    func switchCameras()
-    {
-        guard let videoInput = self.captureSession.inputs.first(where: { $0.ports.first?.mediaType == .video }), let currentPosition = videoInput.ports.first?.sourceDevicePosition else { return }
-        
-        self.captureSession.beginConfiguration()
-        self.captureSession.removeInput(videoInput)
-        
-        let position: AVCaptureDevice.Position = (currentPosition == .back) ? .front : .back
-        let device = self.addCameraDevice(for: position)
+        self.add(captureDevice)
         
         self.captureSession.commitConfiguration()
     }
-    
-    func addCameraDevice(for position: AVCaptureDevice.Position) -> AVCaptureDevice?
-    {
-        let captureDevice: AVCaptureDevice?
-        
-        switch position
-        {
-        case .front, .back: captureDevice = self.cameraDevice(forPosition: position)
-        case .unspecified: captureDevice = AVCaptureDevice.default(for: .video)
-        }
-        
-        if let captureDevice = captureDevice
-        {
-            // Configure capture device to record at 60fps
-            do
-            {
-                try captureDevice.lockForConfiguration()
-                
-                if let activeFormat = captureDevice.formats.first(where: { $0.videoSupportedFrameRateRanges.contains(where: { $0.maxFrameRate == 60 }) })
-                {
-                    captureDevice.activeFormat = activeFormat
-                    captureDevice.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: 60)
-                    captureDevice.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: 60)
-                }
-                
-                captureDevice.unlockForConfiguration()
-            }
-            catch let error as NSError
-            {
-                print(error)
-            }
-            
-            self.add(captureDevice)
-        }
-        
-        return captureDevice
-    }
 }
 
-/// Capture Controls
-@available(iOS 18.0, *)
+/// Camera Control
 public extension CameraController
 {
-    func setControls(_ controls: [AVCaptureControl])
-    {
-        self.controls = controls
-    }
-    
-    func makeCaptureInteraction() -> AVCaptureEventInteraction
+    @MainActor
+    func makeCaptureInteraction(_ captureHandler: @escaping () -> Void) -> AVCaptureEventInteraction
     {
         let interaction = AVCaptureEventInteraction { event in
             switch event.phase
             {
             case .began:
                 Logger.main.info("Activating capture button input.")
-                self.captureHandler?()
+                captureHandler()
                 
             case .ended, .cancelled: Logger.main.info("Deactivating capture button input.")
             @unknown default: break
@@ -194,26 +148,115 @@ public extension CameraController
     }
 }
 
-@available(iOS 18.0, *)
+private extension CameraController
+{
+    func prepareSession() throws
+    {
+        guard !self.isPrepared else { return }
+        
+        self.captureSession.beginConfiguration()
+        
+        guard let captureDevice = self.defaultCamera(for: self.preferredInitialCameraPosition) ?? AVCaptureDevice.default(for: .video) else { throw AVError(.deviceNotConnected) }
+        self.add(captureDevice)
+        
+        self.captureSession.addOutput(self.videoDataOutput)
+        
+        if self.captureSession.supportsControls
+        {
+            self.captureSession.setControlsDelegate(self, queue: self.sessionQueue)
+            
+            let controls = self.makeDefaultControls(for: captureDevice)
+            for control in controls
+            {
+                self.captureSession.addControl(control)
+            }
+        }
+        else
+        {
+            Logger.main.info("Capture session does not support Camera Control.")
+        }
+        
+        self.captureSession.commitConfiguration()
+        
+        self.isPrepared = true
+    }
+    
+    func makeDefaultControls(for device: AVCaptureDevice) -> [AVCaptureControl]
+    {
+        let position = device.position
+        
+        let zoomSlider = AVCaptureSystemZoomSlider(device: device) { zoomFactor in
+            Logger.main.info("Updating \(String(describing: position), privacy: .public) camera zoom level: \(zoomFactor)")
+        }
+
+        let exposureSlider = AVCaptureSystemExposureBiasSlider(device: device) { exposureTargetBias in
+            Logger.main.info("Updating \(String(describing: position), privacy: .public) camera exposure: \(exposureTargetBias)")
+        }
+        
+        return [zoomSlider, exposureSlider]
+    }
+    
+    @discardableResult
+    func add(_ captureDevice: AVCaptureDevice) -> Bool
+    {
+        do
+        {
+            let videoDeviceInput = try AVCaptureDeviceInput(device: captureDevice)
+            
+            if self.captureSession.canAddInput(videoDeviceInput)
+            {
+                self.captureSession.addInput(videoDeviceInput)
+                return true
+            }
+            else
+            {
+                throw AVError(.unsupportedDeviceActiveFormat)
+            }
+        }
+        catch
+        {
+            Logger.main.warning("AVCaptureSession doesn't support device \(captureDevice, privacy: .public). \(error.localizedDescription, privacy: .public)")
+            return false
+        }
+    }
+}
+
+extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate
+{
+    public nonisolated func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
+    {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        
+        // Rotate image to correct orientation
+        let rotatedImage = ciImage.oriented(.right)
+        
+        self.assumeIsolated { cameraController in
+            cameraController.delegate?.cameraController(self, didOutputFrame: rotatedImage)
+        }
+    }
+}
+
 extension CameraController: AVCaptureSessionControlsDelegate
 {
     // Dynamically isolated to actor because we assigned delegate's queue to actor's queue.
     
-    public nonisolated func sessionControlsDidBecomeInactive(_ session: AVCaptureSession)
-    {
-        Logger.main.debug("Session controls became inactive.")
-        
-        self.assumeIsolated { controller in
-            controller.isCameraControlActive = false
-        }
-    }
-    
     public nonisolated func sessionControlsDidBecomeActive(_ session: AVCaptureSession)
     {
-        Logger.main.debug("Session controls became active.")
+        Logger.main.debug("[CameraController] Session controls became active.")
         
         self.assumeIsolated { controller in
             controller.isCameraControlActive = true
+        }
+    }
+    
+    public nonisolated func sessionControlsDidBecomeInactive(_ session: AVCaptureSession)
+    {
+        Logger.main.debug("[CameraController] Session controls became inactive.")
+        
+        self.assumeIsolated { controller in
+            controller.isCameraControlActive = false
         }
     }
     
@@ -225,47 +268,5 @@ extension CameraController: AVCaptureSessionControlsDelegate
     public nonisolated func sessionControlsWillExitFullscreenAppearance(_ session: AVCaptureSession)
     {
         Logger.main.debug("Session controls exited fullscreen appearance.")
-    }
-}
-
-/// Capture Devices
-@available(iOS 18.0, *)
-public extension CameraController
-{
-    func cameraDevice(forPosition position: AVCaptureDevice.Position) -> AVCaptureDevice?
-    {
-        return self.captureDevice(withMediaType: .video, position: position)
-    }
-    
-    private func captureDevice(withMediaType mediaType: AVMediaType, position: AVCaptureDevice.Position) -> AVCaptureDevice?
-    {
-        let devices = (AVCaptureDevice.devices(for: mediaType) as! [AVCaptureDevice]).filter({ $0.position == position })
-        return devices.first
-    }
-}
-
-@available(iOS 18.0, *)
-private extension CameraController
-{
-    func add(_ captureDevice: AVCaptureDevice) -> Bool
-    {
-        do
-        {
-            let videoDeviceInput = try AVCaptureDeviceInput(device: captureDevice)
-            
-            if self.captureSession.canAddInput(videoDeviceInput)
-            {
-                self.captureSession.addInput(videoDeviceInput)
-                
-                return true
-            }
-
-        }
-        catch let error as NSError
-        {
-            print(error)
-        }
-        
-        return false
     }
 }

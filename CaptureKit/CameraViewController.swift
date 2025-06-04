@@ -6,23 +6,45 @@
 //
 
 import UIKit
+import SwiftUI
 import AVKit
 import Photos
 import CryptoKit
-
-import CaptureKit
 
 import Roxas
 import DeltaCore
 import GBCDeltaCore
 
+public struct GameView: UIViewControllerRepresentable
+{
+    let game: Game
+    
+    public init(game: Game)
+    {
+        self.game = game
+    }
+    
+    public func makeUIViewController(context: Context) -> some UIViewController
+    {
+        let gameViewController = CameraViewController()
+        gameViewController.game = self.game
+        gameViewController.loadViewIfNeeded()
+        gameViewController.controllerView.playerIndex = 0
+        return gameViewController
+    }
+    
+    public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context)
+    {
+    }
+}
+
 class CameraViewController: GameViewController
 {
-    weak var cameraFeedProcessor: CameraFeedProcessor?
+    private let cameraController = CameraController(sessionPreset: .cif352x288, preferredCameraPosition: .back)
+    private let cameraProcessor = CameraProcessor()
     
     private var menuButton: UIButton!
-    
-    private var captureInteraction: AVCaptureEventInteraction?
+    private var captureInteraction: AVCaptureEventInteraction!
     
     override func viewDidLoad()
     {
@@ -36,7 +58,7 @@ class CameraViewController: GameViewController
         self.controllerView.addSubview(self.menuButton)
         
         let switchCameraAction = UIAction(title: NSLocalizedString("Switch Camera", comment: ""), image: UIImage(systemName: "camera.rotate")) { [weak self] _ in
-            self?.cameraFeedProcessor?.cameraController.switchCameras()
+            self?.switchCameras()
         }
         
         let exportPhotosAction = UIAction(title: NSLocalizedString("Export Photos", comment: ""), image: UIImage(systemName: "square.and.arrow.up.on.square")) { [weak self] _ in
@@ -46,26 +68,31 @@ class CameraViewController: GameViewController
         let menu = UIMenu(children: [switchCameraAction, exportPhotosAction])
         self.menuButton.menu = menu
         self.menuButton.showsMenuAsPrimaryAction = true
+        
+        self.captureInteraction = self.cameraController.makeCaptureInteraction { [weak self] in
+            self?.pressAButton()
+        }
+        self.view.addInteraction(self.captureInteraction)
+        
+        Task {
+            await self.cameraController.setDelegate(self)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
         
-        if self.captureInteraction == nil, let processor = self.cameraFeedProcessor
-        {
-            let interaction = processor.cameraController.makeCaptureInteraction()
-            self.view.addInteraction(interaction)
-            self.captureInteraction = interaction
-            
-            processor.cameraController.captureHandler = {
-                // Take photo by pressing "A"
-                let input = AnyInput(stringValue: GBCGameInput.a.stringValue, intValue: GBCGameInput.a.intValue, type: .controller(.controllerSkin))
-                self.controllerView.activate(input)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.controllerView.deactivate(input)
-                }
+        Task {
+            do
+            {
+                try await self.cameraController.startSession()
+            }
+            catch
+            {
+                let alertController = UIAlertController(title: String(localized: "Unable to Launch Camera"), message: error.localizedDescription, preferredStyle: .alert)
+                alertController.addAction(.ok)
+                self.present(alertController, animated: true)
             }
         }
     }
@@ -93,6 +120,28 @@ class CameraViewController: GameViewController
 
 private extension CameraViewController
 {
+    func switchCameras()
+    {
+        Task<Void, Never> {
+            guard let activeCamera = await self.cameraController.activeCamera else { return }
+            
+            let position: AVCaptureDevice.Position = (activeCamera.position == .back) ? .front : .back
+            guard let camera = await self.cameraController.defaultCamera(for: position) else { return }
+            
+            await self.cameraController.setActiveCamera(camera)
+        }
+    }
+    
+    func pressAButton()
+    {
+        let input = AnyInput(stringValue: GBCGameInput.a.stringValue, intValue: GBCGameInput.a.intValue, type: .controller(.controllerSkin))
+        self.controllerView.activate(input)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.controllerView.deactivate(input)
+        }
+    }
+    
     func exportAllPhotos()
     {
         Task<Void, Never> {
@@ -170,5 +219,15 @@ extension CameraViewController: GameViewControllerDelegate
     func gameViewController(_ gameViewController: GameViewController, handleMenuInputFrom gameController: any GameController)
     {
         self.menuButton.performPrimaryAction()
+    }
+}
+
+extension CameraViewController: CameraControllerDelegate
+{
+    func cameraController(_ cameraController: CameraController, didOutputFrame image: CIImage)
+    {
+        guard let imageData = self.cameraProcessor.process(image) else { return }
+        
+        GBCEmulatorBridge.shared.cameraFrameData = imageData
     }
 }
