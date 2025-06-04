@@ -15,6 +15,7 @@
 		D5AAEF2B2DC2C706002FD391 /* ZIPFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D5AAEF372DC2D0D6002FD391 /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; };
 		D5AAEF382DC2D0D6002FD391 /* Roxas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D5D6A1B02DF113320009CF1C /* LockedCameraCapture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5D6A1AF2DF113320009CF1C /* LockedCameraCapture.framework */; };
 		D5F27AE82DDE5DB600E2EEB3 /* CaptureExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = D5F27ADF2DDE5DB600E2EEB3 /* CaptureExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D5F27AF92DDE5DFD00E2EEB3 /* CaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; };
 		D5F27AFA2DDE5DFD00E2EEB3 /* CaptureKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -93,6 +94,7 @@
 		D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIPFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5AAEF362DC2D0D6002FD391 /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5AD37F22DC171AF00FE7CA3 /* Delta Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delta Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5D6A1AF2DF113320009CF1C /* LockedCameraCapture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LockedCameraCapture.framework; path = System/Library/Frameworks/LockedCameraCapture.framework; sourceTree = SDKROOT; };
 		D5F27ADF2DDE5DB600E2EEB3 /* CaptureExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = CaptureExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CaptureKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5F27B092DDE602000E2EEB3 /* ControlExtensionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ControlExtensionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +103,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D5D6A1772DF1078B0009CF1C /* Exceptions for "ControlExtension" folder in "Delta Camera" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DeltaCameraCaptureIntent.swift,
+			);
+			target = D5AD37F12DC171AF00FE7CA3 /* Delta Camera */;
+		};
 		D5F27AEC2DDE5DB600E2EEB3 /* Exceptions for "CaptureExtension" folder in "CaptureExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -156,6 +165,7 @@
 		D5F27B0E2DDE602100E2EEB3 /* ControlExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				D5D6A1772DF1078B0009CF1C /* Exceptions for "ControlExtension" folder in "Delta Camera" target */,
 				D5F27B252DDE628A00E2EEB3 /* Exceptions for "ControlExtension" folder in "CaptureExtension" target */,
 				D5F27B1B2DDE602100E2EEB3 /* Exceptions for "ControlExtension" folder in "ControlExtensionExtension" target */,
 			);
@@ -195,6 +205,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5D6A1B02DF113320009CF1C /* LockedCameraCapture.framework in Frameworks */,
 				D5F27B0D2DDE602100E2EEB3 /* SwiftUI.framework in Frameworks */,
 				D5F27B0B2DDE602100E2EEB3 /* WidgetKit.framework in Frameworks */,
 			);
@@ -206,6 +217,7 @@
 		D5AAEF1F2DC2C63A002FD391 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D5D6A1AF2DF113320009CF1C /* LockedCameraCapture.framework */,
 				D5AAEF362DC2D0D6002FD391 /* Roxas.framework */,
 				D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */,
 				D5AAEF222DC2C63D002FD391 /* GBCDeltaCore.framework */,
@@ -664,6 +676,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CaptureExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CaptureExtension;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need the camera for reasons.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -689,6 +702,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CaptureExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CaptureExtension;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need the camera for reasons.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
