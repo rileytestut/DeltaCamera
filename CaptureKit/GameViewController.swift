@@ -147,6 +147,8 @@ private extension GameViewController
         Task<Void, Never> {
             do
             {
+                self.emulatorCore?.save()
+                
                 guard let game = self.game else { return }
                 
                 var exportedPhotoHashes = Set(UserDefaults.shared.exportedPhotoHashes ?? [])
