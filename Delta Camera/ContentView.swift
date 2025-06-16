@@ -15,11 +15,6 @@ import CaptureKit
 
 import ZIPFoundation
 
-extension URL: Identifiable
-{
-    public var id: URL { self }
-}
-
 // Copied from Delta
 enum ImportError: LocalizedError, Hashable, Equatable
 {
@@ -47,20 +42,37 @@ struct ContentView: View
     private var isImporting: Bool = false
     
     @SwiftUI.State
-    private var gameFileURL: URL?
-    
-    @SwiftUI.State
     private var importError: Error?
     
     @SwiftUI.State
     private var showingErrorAlert: Bool = false
     
-    private var localGameURL: URL {
-        let destinationURL = URL.documentsDirectory.appendingPathComponent("Game.gb")
-        return destinationURL
+    @SwiftUI.State
+    private var isGameImported: Bool // No default value since otherwise it can't be changed in init().
+    
+    init()
+    {
+        let isGameImported = FileManager.default.fileExists(atPath: URL.gameFileURL.path())
+        self.isGameImported = isGameImported
     }
     
     var body: some View {
+        if isGameImported
+        {
+            gameView
+        }
+        else
+        {
+            importView
+        }
+    }
+    
+    private var gameView: some View {
+        let game = Game(fileURL: .gameFileURL, type: .gbc)
+        return GameView(game: game).ignoresSafeArea()
+    }
+    
+    private var importView: some View {
         VStack(spacing: 15) {
             Image(systemName: "camera")
                 .imageScale(.large)
@@ -74,18 +86,10 @@ struct ContentView: View
         .fileImporter(isPresented: $isImporting, allowedContentTypes: [.gb, .gbc, .zip]) { result in
             importGame(with: result)
         }
-        .fullScreenCover(item: $gameFileURL) { fileURL in
-            let game = Game(fileURL: fileURL, type: .gbc)
-            GameView(game: game).ignoresSafeArea()
-        }
         .alert("Unable to Open Game", isPresented: $showingErrorAlert, presenting: importError) { error in
             Button("OK") {}
         } message: { error in
             Text(error.localizedDescription)
-        }
-        .onAppear {
-            guard FileManager.default.fileExists(atPath: localGameURL.path()) else { return }
-            gameFileURL = localGameURL
         }
     }
 }
@@ -115,9 +119,9 @@ private extension ContentView
                     gameURL = fileURL
                 }
                 
-                _ = try FileManager.default.copyItem(at: gameURL, to: self.localGameURL, shouldReplace: true)
+                _ = try FileManager.default.copyItem(at: gameURL, to: .gameFileURL, shouldReplace: true)
                 
-                gameFileURL = self.localGameURL
+                isGameImported = true
             }
             catch
             {
