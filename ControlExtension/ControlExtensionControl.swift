@@ -11,7 +11,7 @@ import WidgetKit
 
 struct ControlExtensionControl: ControlWidget {
     var body: some ControlWidgetConfiguration {
-        StaticControlConfiguration(kind: "com.rileytestut.Delta-Camera.ControlExtension") {
+        StaticControlConfiguration(kind: "com.rileytestut.DeltaCamera.ControlExtension") {
             ControlWidgetButton(action: DeltaCameraCaptureIntent()) {
                 Label("Open Delta Camera", systemImage: "camera")
             }
