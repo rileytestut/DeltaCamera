@@ -17,8 +17,8 @@
 		D5AAEF382DC2D0D6002FD391 /* Roxas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D5D6A1B02DF113320009CF1C /* LockedCameraCapture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5D6A1AF2DF113320009CF1C /* LockedCameraCapture.framework */; };
 		D5F27AE82DDE5DB600E2EEB3 /* CaptureExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = D5F27ADF2DDE5DB600E2EEB3 /* CaptureExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D5F27AF92DDE5DFD00E2EEB3 /* CaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; };
-		D5F27AFA2DDE5DFD00E2EEB3 /* CaptureKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D5F27AF92DDE5DFD00E2EEB3 /* CaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; platformFilter = ios; };
+		D5F27AFA2DDE5DFD00E2EEB3 /* CaptureKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D5F27B0B2DDE602100E2EEB3 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27B0A2DDE602000E2EEB3 /* WidgetKit.framework */; };
 		D5F27B0D2DDE602100E2EEB3 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27B0C2DDE602100E2EEB3 /* SwiftUI.framework */; };
 		D5F27B1A2DDE602100E2EEB3 /* ControlExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D5F27B092DDE602000E2EEB3 /* ControlExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -477,6 +477,7 @@
 		};
 		D5F27AF82DDE5DFD00E2EEB3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = D5F27AF22DDE5DFD00E2EEB3 /* CaptureKit */;
 			targetProxy = D5F27AF72DDE5DFD00E2EEB3 /* PBXContainerItemProxy */;
 		};
@@ -623,8 +624,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -632,9 +633,11 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rileytestut.DeltaCamera;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -654,8 +657,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -663,9 +666,11 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rileytestut.DeltaCamera;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
