@@ -678,7 +678,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CaptureExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CaptureExtension;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need the camera for reasons.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Delta Camera uses your camera to emulate the Game Boy Camera.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -704,7 +704,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CaptureExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CaptureExtension;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need the camera for reasons.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Delta Camera uses your camera to emulate the Game Boy Camera.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

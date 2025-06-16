@@ -9,20 +9,12 @@ import Foundation
 import LockedCameraCapture
 import SwiftUI
 
-import DeltaCore
-import GBCDeltaCore
-
 @main
 struct CaptureExtension: LockedCameraCaptureExtension
 {    
-    init()
-    {
-        Delta.register(GBC.core)
-    }
-    
     var body: some LockedCameraCaptureExtensionScene {
         LockedCameraCaptureUIScene { session in
-            CaptureExtensionViewFinder(session: session)
+            ContentView(session: session)
         }
     }
 }
