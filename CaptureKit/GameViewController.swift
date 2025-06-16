@@ -26,7 +26,7 @@ public struct GameView: UIViewControllerRepresentable
     
     public func makeUIViewController(context: Context) -> some UIViewController
     {
-        let gameViewController = CameraViewController()
+        let gameViewController = GameViewController()
         gameViewController.game = self.game
         gameViewController.loadViewIfNeeded()
         gameViewController.controllerView.playerIndex = 0
@@ -38,7 +38,7 @@ public struct GameView: UIViewControllerRepresentable
     }
 }
 
-class CameraViewController: GameViewController
+public class GameViewController: DeltaCore.GameViewController
 {
     private let cameraController = CameraController(sessionPreset: .cif352x288, preferredCameraPosition: .back)
     private let cameraProcessor = CameraProcessor()
@@ -46,7 +46,7 @@ class CameraViewController: GameViewController
     private var menuButton: UIButton!
     private var captureInteraction: AVCaptureEventInteraction!
     
-    override func viewDidLoad()
+    public override func viewDidLoad()
     {
         super.viewDidLoad()
         
@@ -79,7 +79,7 @@ class CameraViewController: GameViewController
         }
     }
     
-    override func viewDidAppear(_ animated: Bool)
+    public override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
         
@@ -97,7 +97,7 @@ class CameraViewController: GameViewController
         }
     }
     
-    override func viewDidLayoutSubviews()
+    public override func viewDidLayoutSubviews()
     {
         super.viewDidLayoutSubviews()
         
@@ -118,7 +118,7 @@ class CameraViewController: GameViewController
     }
 }
 
-private extension CameraViewController
+private extension GameViewController
 {
     func switchCameras()
     {
@@ -214,17 +214,17 @@ private extension CameraViewController
     }
 }
 
-extension CameraViewController: GameViewControllerDelegate
+extension GameViewController: GameViewControllerDelegate
 {
-    func gameViewController(_ gameViewController: GameViewController, handleMenuInputFrom gameController: any GameController)
+    public func gameViewController(_ gameViewController: DeltaCore.GameViewController, handleMenuInputFrom gameController: any GameController)
     {
         self.menuButton.performPrimaryAction()
     }
 }
 
-extension CameraViewController: CameraControllerDelegate
+extension GameViewController: CameraControllerDelegate
 {
-    func cameraController(_ cameraController: CameraController, didOutputFrame image: CIImage)
+    public func cameraController(_ cameraController: CameraController, didOutputFrame image: CIImage)
     {
         guard let imageData = self.cameraProcessor.process(image) else { return }
         
