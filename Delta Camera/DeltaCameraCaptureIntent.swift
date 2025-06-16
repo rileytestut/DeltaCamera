@@ -9,7 +9,7 @@ import AppIntents
 
 struct DeltaCameraCaptureIntent: CameraCaptureIntent
 {
-    struct AppContext: Codable
+    struct AppContext: Codable, Sendable
     {
     }
     
@@ -17,15 +17,8 @@ struct DeltaCameraCaptureIntent: CameraCaptureIntent
     static let description = IntentDescription("Capture photos with Delta Camera.")
 
     @MainActor
-    func perform() async throws -> some IntentResult {
-//        do {
-//            if let context = try await DeltaCameraCaptureIntent.appContext {
-//                // Read the camera direction from the appContext.
-//                return context.cameraDirection
-//            }
-//        } catch {
-//            // Handle error condition.
-//        }
+    func perform() async throws -> some IntentResult
+    {
         return .result()
     }
 }

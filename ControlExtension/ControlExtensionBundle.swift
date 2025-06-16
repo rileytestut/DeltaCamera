@@ -11,6 +11,6 @@ import SwiftUI
 @main
 struct ControlExtensionBundle: WidgetBundle {
     var body: some Widget {
-        ControlExtensionControl()
+        CameraControl()
     }
 }
