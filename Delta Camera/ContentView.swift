@@ -69,7 +69,7 @@ struct ContentView: View
     
     private var gameView: some View {
         let game = Game(fileURL: .gameFileURL, type: .gbc)
-        return GameView(game: game).ignoresSafeArea()
+        return GameView(game: game).ignoresSafeArea().statusBarHidden()
     }
     
     private var importView: some View {
