@@ -215,7 +215,7 @@ private extension CameraController
         }
         catch
         {
-            Logger.main.warning("AVCaptureSession doesn't support device \(captureDevice, privacy: .public). \(error.localizedDescription, privacy: .public)")
+            Logger.main.error("AVCaptureSession doesn't support device \(captureDevice, privacy: .public). \(error.localizedDescription, privacy: .public)")
             return false
         }
     }

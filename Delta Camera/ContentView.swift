@@ -59,17 +59,13 @@ struct ContentView: View
     var body: some View {
         if isGameImported
         {
-            gameView
+            let game = Game(fileURL: .gameFileURL, type: .gbc)
+            GameView(game: game)
         }
         else
         {
             importView
         }
-    }
-    
-    private var gameView: some View {
-        let game = Game(fileURL: .gameFileURL, type: .gbc)
-        return GameView(game: game).ignoresSafeArea().statusBarHidden()
     }
     
     private var importView: some View {

@@ -15,29 +15,6 @@ import Roxas
 import DeltaCore
 import GBCDeltaCore
 
-public struct GameView: UIViewControllerRepresentable
-{
-    let game: Game
-    
-    public init(game: Game)
-    {
-        self.game = game
-    }
-    
-    public func makeUIViewController(context: Context) -> some UIViewController
-    {
-        let gameViewController = GameViewController()
-        gameViewController.game = self.game
-        gameViewController.loadViewIfNeeded()
-        gameViewController.controllerView.playerIndex = 0
-        return gameViewController
-    }
-    
-    public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context)
-    {
-    }
-}
-
 public class GameViewController: DeltaCore.GameViewController
 {
     private let cameraController = CameraController(sessionPreset: .cif352x288, preferredCameraPosition: .back)
