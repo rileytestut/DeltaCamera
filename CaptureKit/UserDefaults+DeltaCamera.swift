@@ -15,4 +15,7 @@ extension UserDefaults
     
     @NSManaged
     var exportedPhotoHashes: [String]?
+    
+    @NSManaged
+    var respectSilentMode: Bool
 }
