@@ -50,21 +50,39 @@ struct ContentView: View
     @SwiftUI.State
     private var isGameImported: Bool // No default value since otherwise it can't be changed in init().
     
+    @SwiftUI.State
+    private var isActivePatron: Bool
+    
     init()
     {
         let isGameImported = FileManager.default.fileExists(atPath: URL.gameFileURL.path())
         self.isGameImported = isGameImported
+        
+        #if PAL
+        self.isActivePatron = true // Assume PAL users are active patrons.
+        #else
+        self.isActivePatron = (Keychain.shared.patreonAccountID != nil)
+        #endif
     }
     
     var body: some View {
-        if isGameImported
-        {
-            let game = Game(fileURL: .gameFileURL, type: .gbc)
-            GameView(game: game)
+        VStack {
+            if !isActivePatron
+            {
+                JoinPatreonView(isActivePatron: $isActivePatron)
+            }
+            else if isGameImported
+            {
+                let game = Game(fileURL: .gameFileURL, type: .gbc)
+                GameView(game: game)
+            }
+            else
+            {
+                importView
+            }
         }
-        else
-        {
-            importView
+        .task {
+            await checkPatreonAccount()
         }
     }
     
@@ -128,7 +146,7 @@ private extension ContentView
     }
     
     // Heavily based on Delta's DatabaseManager.extractCompressedGames(at:completion:)
-    private func unzipGame(at url: URL) throws(ImportError) -> URL
+    func unzipGame(at url: URL) throws(ImportError) -> URL
     {
         var gameURL: URL?
         
@@ -165,6 +183,47 @@ private extension ContentView
         
         guard let gameURL else { throw .invalid(url) }
         return gameURL
+    }
+    
+    func checkPatreonAccount() async
+    {
+        do
+        {
+            guard Keychain.shared.patreonAccountID != nil else { return }
+            
+            let account = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<PatreonAPI.UserAccount, Error>) in
+                PatreonAPI.shared.fetchAccount { result in
+                    switch result
+                    {
+                    case .failure(let error): continuation.resume(throwing: error)
+                    case .success(let account): continuation.resume(returning: account)
+                    }
+                }
+            }
+            
+            if !account.hasBetaAccess
+            {
+                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                    PatreonAPI.shared.signOut { result in
+                        switch result
+                        {
+                        case .failure(let error): continuation.resume(throwing: error)
+                        case .success: continuation.resume()
+                        }
+                    }
+                }
+                
+                self.isActivePatron = false
+            }
+            else
+            {
+                self.isActivePatron = true
+            }
+        }
+        catch
+        {
+            Logger.main.error("Failed to fetch Patreon account: \(error.localizedDescription, privacy: .public)")
+        }
     }
 }
 
