@@ -160,9 +160,8 @@ public extension PatreonAPI
             switch result
             {
             case .failure(PatreonAPIError.notAuthenticated):
-                self.signOut() { (result) in
-                    completion(.failure(PatreonAPIError.notAuthenticated))
-                }
+                self.signOut()
+                completion(.failure(PatreonAPIError.notAuthenticated))
                 
             case .failure(let error as DecodingError):
                 do
@@ -199,13 +198,11 @@ public extension PatreonAPI
         }
     }
     
-    func signOut(completion: @escaping (Result<Void, Swift.Error>) -> Void)
+    func signOut()
     {
         Keychain.shared.patreonAccessToken = nil
         Keychain.shared.patreonRefreshToken = nil
         Keychain.shared.patreonAccountID = nil
-        
-        completion(.success(()))
     }
 }
 
