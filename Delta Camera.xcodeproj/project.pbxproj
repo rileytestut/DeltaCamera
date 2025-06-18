@@ -15,6 +15,7 @@
 		D5AAEF2B2DC2C706002FD391 /* ZIPFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D5AAEF372DC2D0D6002FD391 /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; };
 		D5AAEF382DC2D0D6002FD391 /* Roxas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D5C6DBBF2E035B9600D8B441 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = D5C6DBBE2E035B9600D8B441 /* KeychainAccess */; };
 		D5D6A1B02DF113320009CF1C /* LockedCameraCapture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5D6A1AF2DF113320009CF1C /* LockedCameraCapture.framework */; };
 		D5F27AE82DDE5DB600E2EEB3 /* CaptureExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = D5F27ADF2DDE5DB600E2EEB3 /* CaptureExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D5F27AF92DDE5DFD00E2EEB3 /* CaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; platformFilter = ios; };
@@ -183,6 +184,7 @@
 			files = (
 				D5AAEF372DC2D0D6002FD391 /* Roxas.framework in Frameworks */,
 				D5F27AF92DDE5DFD00E2EEB3 /* CaptureKit.framework in Frameworks */,
+				D5C6DBBF2E035B9600D8B441 /* KeychainAccess in Frameworks */,
 				D5AAEF242DC2C6F3002FD391 /* DeltaCore.framework in Frameworks */,
 				D5AAEF272DC2C6F5002FD391 /* GBCDeltaCore.framework in Frameworks */,
 				D5AAEF2A2DC2C706002FD391 /* ZIPFoundation.framework in Frameworks */,
@@ -289,6 +291,7 @@
 			);
 			name = "Delta Camera";
 			packageProductDependencies = (
+				D5C6DBBE2E035B9600D8B441 /* KeychainAccess */,
 			);
 			productName = "Delta Camera";
 			productReference = D5AD37F22DC171AF00FE7CA3 /* Delta Camera.app */;
@@ -394,6 +397,9 @@
 			);
 			mainGroup = D5AD37E92DC171AF00FE7CA3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D5C6DBB42E034F4700D8B441 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D5AD37F32DC171AF00FE7CA3 /* Products */;
 			projectDirPath = "";
@@ -899,6 +905,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D5C6DBB42E034F4700D8B441 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 4.2.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D5C6DBBE2E035B9600D8B441 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D5C6DBB42E034F4700D8B441 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D5AD37EA2DC171AF00FE7CA3 /* Project object */;
 }
