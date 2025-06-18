@@ -54,6 +54,12 @@ struct ContentView: View
     
     init()
     {
+        if UserDefaults.shared.signOutPatreon
+        {
+            PatreonAPI.shared.signOut()
+            UserDefaults.shared.signOutPatreon = false // Reset back to OFF
+        }
+        
         let isGameImported = FileManager.default.fileExists(atPath: URL.gameFileURL.path())
         self.isGameImported = isGameImported
         
@@ -202,16 +208,7 @@ private extension ContentView
             
             if !account.hasBetaAccess
             {
-                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                    PatreonAPI.shared.signOut { result in
-                        switch result
-                        {
-                        case .failure(let error): continuation.resume(throwing: error)
-                        case .success: continuation.resume()
-                        }
-                    }
-                }
-                
+                PatreonAPI.shared.signOut()
                 self.isActivePatron = false
             }
             else

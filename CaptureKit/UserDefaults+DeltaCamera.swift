@@ -8,7 +8,7 @@
 import Foundation
 import Roxas
 
-extension UserDefaults
+public extension UserDefaults
 {
     // TODO: Replace this with shared app-container defaults
     static let shared = UserDefaults.standard
@@ -18,4 +18,7 @@ extension UserDefaults
     
     @NSManaged
     var respectSilentMode: Bool
+    
+    @NSManaged
+    var signOutPatreon: Bool
 }
