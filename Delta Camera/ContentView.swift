@@ -86,9 +86,11 @@ struct ContentView: View
                 importView
             }
         }
+        #if !PAL
         .task {
             await checkPatreonAccount()
         }
+        #endif
     }
     
     private var importView: some View {
