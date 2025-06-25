@@ -1,5 +1,5 @@
 //
-//  Delta_CameraApp.swift
+//  DeltaCameraApp.swift
 //  Delta Camera
 //
 //  Created by Riley Testut on 4/29/25.
@@ -11,7 +11,7 @@ import DeltaCore
 import GBCDeltaCore
 
 @main
-struct Delta_CameraApp: App
+struct DeltaCameraApp: App
 {
     init()
     {
