@@ -126,6 +126,28 @@ public extension CameraController
     }
 }
 
+/// Camera Control
+public extension CameraController
+{
+    @MainActor
+    func makeCaptureInteraction(_ captureHandler: @escaping () -> Void) -> AVCaptureEventInteraction
+    {
+        let interaction = AVCaptureEventInteraction { event in
+            switch event.phase
+            {
+            case .began:
+                Logger.main.info("Activating capture button input.")
+                captureHandler()
+                
+            case .ended, .cancelled: Logger.main.info("Deactivating capture button input.")
+            @unknown default: break
+            }
+        }
+        
+        return interaction
+    }
+}
+
 private extension CameraController
 {
     func prepareSession() throws

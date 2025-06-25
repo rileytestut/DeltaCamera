@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVKit
 
 import Roxas
 import DeltaCore
@@ -17,6 +18,7 @@ public class GameViewController: DeltaCore.GameViewController
     private let cameraProcessor = CameraProcessor()
     
     private var menuButton: UIButton!
+    private var captureInteraction: AVCaptureEventInteraction!
     
     public override func viewDidLoad()
     {
@@ -36,6 +38,11 @@ public class GameViewController: DeltaCore.GameViewController
         let menu = UIMenu(children: [switchCameraAction])
         self.menuButton.menu = menu
         self.menuButton.showsMenuAsPrimaryAction = true
+        
+        self.captureInteraction = self.cameraController.makeCaptureInteraction { [weak self] in
+            self?.pressAButton()
+        }
+        self.view.addInteraction(self.captureInteraction)
         
         Task<Void, Never> {
             await self.cameraController.setDelegate(self)
@@ -92,6 +99,16 @@ private extension GameViewController
             guard let camera = await self.cameraController.defaultCamera(for: position) else { return }
             
             await self.cameraController.setActiveCamera(camera)
+        }
+    }
+    
+    func pressAButton()
+    {
+        let input = AnyInput(stringValue: GBCGameInput.a.stringValue, intValue: GBCGameInput.a.intValue, type: .controller(.controllerSkin))
+        self.controllerView.activate(input)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.controllerView.deactivate(input)
         }
     }
 }
