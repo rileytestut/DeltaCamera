@@ -29,6 +29,8 @@ public class GameViewController: DeltaCore.GameViewController
         self.delegate = self
         self.automaticallyPausesWhileInactive = false
         
+        self.emulatorCore?.audioManager.respectsSilentMode = UserDefaults.shared.respectSilentMode
+        
         self.menuButton = UIButton(type: .custom)
         self.menuButton.isUserInteractionEnabled = false
         self.controllerView.addSubview(self.menuButton)
