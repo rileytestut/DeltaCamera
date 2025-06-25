@@ -38,6 +38,7 @@ public actor CameraController: NSObject
     private let preferredInitialCameraPosition: AVCaptureDevice.Position
     
     private var isPrepared: Bool = false
+    private var isCameraControlActive: Bool = false
     
     public init(sessionPreset: AVCaptureSession.Preset, preferredCameraPosition: AVCaptureDevice.Position = .unspecified)
     {
@@ -138,9 +139,39 @@ private extension CameraController
         
         self.captureSession.addOutput(self.videoDataOutput)
         
+        if self.captureSession.supportsControls
+        {
+            self.captureSession.setControlsDelegate(self, queue: self.sessionQueue)
+            
+            let controls = self.makeDefaultControls(for: captureDevice)
+            for control in controls
+            {
+                self.captureSession.addControl(control)
+            }
+        }
+        else
+        {
+            Logger.main.info("Capture session does not support Camera Control.")
+        }
+        
         self.captureSession.commitConfiguration()
         
         self.isPrepared = true
+    }
+    
+    func makeDefaultControls(for device: AVCaptureDevice) -> [AVCaptureControl]
+    {
+        let position = device.position
+        
+        let zoomSlider = AVCaptureSystemZoomSlider(device: device) { zoomFactor in
+            Logger.main.info("Updating \(String(describing: position), privacy: .public) camera zoom level: \(zoomFactor)")
+        }
+
+        let exposureSlider = AVCaptureSystemExposureBiasSlider(device: device) { exposureTargetBias in
+            Logger.main.info("Updating \(String(describing: position), privacy: .public) camera exposure: \(exposureTargetBias)")
+        }
+        
+        return [zoomSlider, exposureSlider]
     }
     
     @discardableResult
@@ -182,5 +213,38 @@ extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate
         self.assumeIsolated { cameraController in
             cameraController.delegate?.cameraController(self, didOutputFrame: rotatedImage)
         }
+    }
+}
+
+extension CameraController: AVCaptureSessionControlsDelegate
+{
+    // Dynamically isolated to actor because we assigned delegate's queue to actor's queue.
+    
+    public nonisolated func sessionControlsDidBecomeActive(_ session: AVCaptureSession)
+    {
+        Logger.main.debug("[CameraController] Session controls became active.")
+        
+        self.assumeIsolated { controller in
+            controller.isCameraControlActive = true
+        }
+    }
+    
+    public nonisolated func sessionControlsDidBecomeInactive(_ session: AVCaptureSession)
+    {
+        Logger.main.debug("[CameraController] Session controls became inactive.")
+        
+        self.assumeIsolated { controller in
+            controller.isCameraControlActive = false
+        }
+    }
+    
+    public nonisolated func sessionControlsWillEnterFullscreenAppearance(_ session: AVCaptureSession)
+    {
+        Logger.main.debug("Session controls entered fullscreen appearance.")
+    }
+    
+    public nonisolated func sessionControlsWillExitFullscreenAppearance(_ session: AVCaptureSession)
+    {
+        Logger.main.debug("Session controls exited fullscreen appearance.")
     }
 }
