@@ -15,7 +15,19 @@
 		D5AAEF2B2DC2C706002FD391 /* ZIPFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D5AAEF372DC2D0D6002FD391 /* Roxas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; };
 		D5AAEF382DC2D0D6002FD391 /* Roxas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5AAEF362DC2D0D6002FD391 /* Roxas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D5F27AF92DDE5DFD00E2EEB3 /* CaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; platformFilter = ios; };
+		D5F27AFA2DDE5DFD00E2EEB3 /* CaptureKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D5F27AF72DDE5DFD00E2EEB3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5AD37EA2DC171AF00FE7CA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5F27AF22DDE5DFD00E2EEB3;
+			remoteInfo = CaptureKit;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		D5AAEF262DC2C6F3002FD391 /* Embed Frameworks */ = {
@@ -25,6 +37,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				D5AAEF382DC2D0D6002FD391 /* Roxas.framework in Embed Frameworks */,
+				D5F27AFA2DDE5DFD00E2EEB3 /* CaptureKit.framework in Embed Frameworks */,
 				D5AAEF252DC2C6F3002FD391 /* DeltaCore.framework in Embed Frameworks */,
 				D5AAEF282DC2C6F5002FD391 /* GBCDeltaCore.framework in Embed Frameworks */,
 				D5AAEF2B2DC2C706002FD391 /* ZIPFoundation.framework in Embed Frameworks */,
@@ -40,12 +53,31 @@
 		D5AAEF292DC2C706002FD391 /* ZIPFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZIPFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5AAEF362DC2D0D6002FD391 /* Roxas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Roxas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5AD37F22DC171AF00FE7CA3 /* Delta Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Delta Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CaptureKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D5F27AFB2DDE5DFD00E2EEB3 /* Exceptions for "CaptureKit" folder in "CaptureKit" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			publicHeaders = (
+				CaptureKit.h,
+			);
+			target = D5F27AF22DDE5DFD00E2EEB3 /* CaptureKit */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D5AD37F42DC171AF00FE7CA3 /* Delta Camera */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Delta Camera";
+			sourceTree = "<group>";
+		};
+		D5F27AF42DDE5DFD00E2EEB3 /* CaptureKit */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D5F27AFB2DDE5DFD00E2EEB3 /* Exceptions for "CaptureKit" folder in "CaptureKit" target */,
+			);
+			path = CaptureKit;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -56,6 +88,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5AAEF372DC2D0D6002FD391 /* Roxas.framework in Frameworks */,
+				D5F27AF92DDE5DFD00E2EEB3 /* CaptureKit.framework in Frameworks */,
 				D5AAEF242DC2C6F3002FD391 /* DeltaCore.framework in Frameworks */,
 				D5AAEF272DC2C6F5002FD391 /* GBCDeltaCore.framework in Frameworks */,
 				D5AAEF2A2DC2C706002FD391 /* ZIPFoundation.framework in Frameworks */,
@@ -80,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				D5AD37F42DC171AF00FE7CA3 /* Delta Camera */,
+				D5F27AF42DDE5DFD00E2EEB3 /* CaptureKit */,
 				D5AAEF1F2DC2C63A002FD391 /* Frameworks */,
 				D5AD37F32DC171AF00FE7CA3 /* Products */,
 			);
@@ -89,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				D5AD37F22DC171AF00FE7CA3 /* Delta Camera.app */,
+				D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,6 +153,29 @@
 			productName = "Delta Camera";
 			productReference = D5AD37F22DC171AF00FE7CA3 /* Delta Camera.app */;
 			productType = "com.apple.product-type.application";
+		};
+		D5F27AF22DDE5DFD00E2EEB3 /* CaptureKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5F27AFC2DDE5DFD00E2EEB3 /* Build configuration list for PBXNativeTarget "CaptureKit" */;
+			buildPhases = (
+				D5F27AEE2DDE5DFD00E2EEB3 /* Headers */,
+				D5F27AEF2DDE5DFD00E2EEB3 /* Sources */,
+				D5F27AF02DDE5DFD00E2EEB3 /* Frameworks */,
+				D5F27AF12DDE5DFD00E2EEB3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D5F27AF42DDE5DFD00E2EEB3 /* CaptureKit */,
+			);
+			name = CaptureKit;
+			packageProductDependencies = (
+			);
+			productName = CaptureKit;
+			productReference = D5F27AF32DDE5DFD00E2EEB3 /* CaptureKit.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -149,6 +207,7 @@
 			projectRoot = "";
 			targets = (
 				D5AD37F12DC171AF00FE7CA3 /* Delta Camera */,
+				D5F27AF22DDE5DFD00E2EEB3 /* CaptureKit */,
 			);
 		};
 /* End PBXProject section */
@@ -172,6 +231,15 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D5F27AF82DDE5DFD00E2EEB3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = D5F27AF22DDE5DFD00E2EEB3 /* CaptureKit */;
+			targetProxy = D5F27AF72DDE5DFD00E2EEB3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D5AD37FE2DC171B000FE7CA3 /* Debug */ = {
@@ -304,6 +372,7 @@
 				DEVELOPMENT_TEAM = 6XVY5G3U44;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Delta Camera uses your camera to emulate the Game Boy Camera.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -333,6 +402,7 @@
 				DEVELOPMENT_TEAM = 6XVY5G3U44;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Delta Camera uses your camera to emulate the Game Boy Camera.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -368,6 +438,15 @@
 			buildConfigurations = (
 				D5AD38012DC171B000FE7CA3 /* Debug */,
 				D5AD38022DC171B000FE7CA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5F27AFC2DDE5DFD00E2EEB3 /* Build configuration list for PBXNativeTarget "CaptureKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5F27AFD2DDE5DFD00E2EEB3 /* Debug */,
+				D5F27AFE2DDE5DFD00E2EEB3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
